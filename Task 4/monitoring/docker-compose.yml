@@ -1,0 +1,34 @@
+services:
+
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus_data:/prometheus
+    depends_on:
+      - netdata
+    restart: unless-stopped
+
+  netdata:
+    image: netdata/netdata:latest
+    container_name: netdata
+    ports:
+      - "19999:19999"
+    volumes:
+      - netdata_config:/etc/netdata
+      - netdata_lib:/var/lib/netdata
+      - netdata_cache:/var/cache/netdata
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    restart: unless-stopped
+
+volumes:
+  prometheus_data:
+  netdata_config:
+  netdata_lib:
+  netdata_cache:
+
